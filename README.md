@@ -4,9 +4,9 @@ this tool is made to track the gmail and see if it uses any of the websites list
 use able but not complete - under development
 
 usage :
-rm -rf ~/gmail-osint
-git clone https://github.com/axomtools/gmail-osint.git
-cd gmail-osint
+rm -rf ~/axogint
+git clone https://github.com/axomtools/axogint
+cd axogint
 python3 core.py user@gmail.com
 
 - How does it work?
@@ -17,6 +17,6 @@ axom have made this tool
 
 
 
-our discord : https://discord.gg/FgR3MXqZy9
+our discord : https://discord.gg/QAhCXgaDZg
 our youtube : https://youtube.com/@axos0022
 our tiktok : https://tiktok.com/@axos002

@@ -3,6 +3,7 @@ import pkgutil
 import modules
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import sys
+from utils import retryrequest
 
 def loadmodules():
     mods = []
@@ -21,9 +22,10 @@ def runchecks(email, threads, timeout, whitelist):
         futures = {executor.submit(m.check, email, timeout): m for m in allmods}
         for fut in as_completed(futures):
             mod = futures[fut]
+            servicename = mod.__name__.split('.')[-1]
             try:
                 res = fut.result()
             except Exception as e:
-                res = {'service': mod.__name__.split('.')[-1], 'exists': None, 'error': str(e)}
-            results[res.get('service', mod.__name__.split('.')[-1])] = res
+                res = {'service': servicename, 'exists': None, 'url': '', 'error': str(e)}
+            results[res.get('service', servicename)] = res
     return results

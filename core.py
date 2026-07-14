@@ -16,7 +16,7 @@ def loadmodules():
             mods.append(mod)
     return mods
 
-def runchecks(email, threads, timeout, whitelist, proxy, usetor, dodns, rate_limit, verbose):
+def runchecks(email, threads, timeout, whitelist, proxy, usetor, dodns, rate_limit, verbose, progress=True):
     allmods = loadmodules()
     if whitelist:
         allmods = [m for m in allmods if m.__name__.split('.')[-1] in whitelist]
@@ -26,7 +26,8 @@ def runchecks(email, threads, timeout, whitelist, proxy, usetor, dodns, rate_lim
     session = setup_session(proxy, usetor)
     results = {}
     lock = threading.Lock()
-    progress = tqdm(total=len(allmods), desc='checking', unit='mod', leave=False)
+    if progress:
+        pbar = tqdm(total=len(allmods), desc='checking', unit='mod', leave=False)
     def check_module(mod):
         nonlocal results
         servicename = mod.__name__.split('.')[-1]
@@ -38,7 +39,8 @@ def runchecks(email, threads, timeout, whitelist, proxy, usetor, dodns, rate_lim
             results[res.get('service', servicename)] = res
         if rate_limit > 0:
             time.sleep(rate_limit)
-        progress.update(1)
+        if progress:
+            pbar.update(1)
     with ThreadPoolExecutor(max_workers=threads) as executor:
         futures = [executor.submit(check_module, m) for m in allmods]
         for fut in as_completed(futures):
@@ -46,5 +48,6 @@ def runchecks(email, threads, timeout, whitelist, proxy, usetor, dodns, rate_lim
                 fut.result()
             except Exception:
                 pass
-    progress.close()
+    if progress:
+        pbar.close()
     return results

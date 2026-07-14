@@ -7,7 +7,7 @@ usage :
 ```rm -rf ~/axogint```
 ```git clone https://github.com/axomtools/axogint```
 ```cd axogint```
-```python3 core.py user@gmail.com```
+```python3 axogint.py user@gmail.com```
 
 - How does it work?
 the tool tries to sign up/register the target gmail on the listed websites using the api, if it Already exists then the gmail does use this website.

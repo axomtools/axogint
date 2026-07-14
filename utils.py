@@ -5,18 +5,20 @@ import requests
 from requests.exceptions import Timeout, ConnectionError, RequestException
 
 def formatoutput(results, fmt):
+    # filter out non-registered (exists != True)
+    registered = {s: r for s, r in results.items() if r.get('exists') is True}
+
+    if not registered:
+        print("no registered accounts found")
+        return
+
     if fmt == 'json':
-        print(json.dumps(results, indent=2))
+        print(json.dumps(registered, indent=2))
     else:
         headers = ['service', 'exists', 'url']
         rows = []
-        for s, r in results.items():
-            exists_val = r.get('exists')
-            if exists_val is None:
-                exists_val = 'unknown'
-            else:
-                exists_val = str(exists_val)
-            rows.append([s, exists_val, r.get('url', '')])
+        for s, r in registered.items():
+            rows.append([s, str(r.get('exists')), r.get('url', '')])
 
         colwidths = [max(len(h), max((len(str(row[i])) for row in rows), default=0)) for i, h in enumerate(headers)]
         fmtline = ' | '.join('{:<' + str(w) + '}' for w in colwidths)

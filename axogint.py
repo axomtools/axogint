@@ -6,7 +6,7 @@ from utils import formatoutput
 
 def main():
     parser = argparse.ArgumentParser(description='axogint - email osint tool')
-    parser.add_argument('email', help='target email address')
+    parser.add_argument('email', nargs='?', help='target email address')
     parser.add_argument('--threads', type=int, default=20, help='number of threads')
     parser.add_argument('--timeout', type=int, default=10, help='request timeout')
     parser.add_argument('--output', choices=['json','table'], default='table', help='output format')
@@ -17,10 +17,20 @@ def main():
     parser.add_argument('--rate-limit', type=float, default=0, help='global delay between requests (seconds)')
     parser.add_argument('--color', action='store_true', help='enable colored output')
     parser.add_argument('--verbose', action='store_true', help='show detailed error messages')
+    parser.add_argument('--web', action='store_true', help='start web interface on localhost:5000')
     args = parser.parse_args()
 
+    if args.web:
+        from web import start_web
+        start_web()
+        return
+
+    if not args.email:
+        parser.print_help()
+        sys.exit(1)
+
     results = runchecks(args.email, args.threads, args.timeout, args.modules,
-                        args.proxy, args.tor, args.dns, args.rate_limit, args.verbose)
+                        args.proxy, args.tor, args.dns, args.rate_limit, args.verbose, progress=True)
     formatoutput(results, args.output, args.color)
 
 if __name__ == '__main__':

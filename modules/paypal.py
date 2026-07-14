@@ -1,10 +1,10 @@
-import requests
+from utils import retryrequest
 
 def check(email, timeout):
     url = 'https://www.paypal.com/signin/'
     data = {'login_email': email}
     try:
-        r = requests.post(url, data=data, timeout=timeout, allow_redirects=False)
+        r = retryrequest('POST', url, timeout=timeout, data=data, allow_redirects=False)
         exists = 'email' in r.text.lower()
     except:
         exists = None
